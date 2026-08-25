@@ -1,17 +1,42 @@
 # Dependencies
 node_modules/
 
+<<<<<<< HEAD
 # Logs
 *.log
 npm-debug.log*
 
 # Environment files
+=======
+# Build output
+dist/
+dist-ssr/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local env
+>>>>>>> 525de96a0e07d32ee770793b6000e8e316f8d696
 .env
 .env.*
 !.env.example
 
+<<<<<<< HEAD
 # OS and editor files
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+=======
+# Vite
+.vite/
+>>>>>>> 525de96a0e07d32ee770793b6000e8e316f8d696

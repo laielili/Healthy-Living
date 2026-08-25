@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 c41b2a753fb1cb67511f2f0e4b044d27a2019053 lilai3552 <lilai3552@gmail.com> 1787642661 +0800	commit (initial): Initial commit: Healthy Living frontend prototype (Vite + React)
+c41b2a753fb1cb67511f2f0e4b044d27a2019053 0000000000000000000000000000000000000000 lilai3552 <lilai3552@gmail.com> 1787642733 +0800	Branch: renamed refs/heads/master to refs/heads/main
+0000000000000000000000000000000000000000 c41b2a753fb1cb67511f2f0e4b044d27a2019053 lilai3552 <lilai3552@gmail.com> 1787642733 +0800	Branch: renamed refs/heads/master to refs/heads/main
+c41b2a753fb1cb67511f2f0e4b044d27a2019053 525de96a0e07d32ee770793b6000e8e316f8d696 lilai3552 <lilai3552@gmail.com> 1787643362 +0800	commit: Add built static site to docs/ for GitHub Pages
