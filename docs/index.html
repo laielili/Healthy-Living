@@ -1,13 +1,1457 @@
-<!doctype html>
+<!DOCTYPE html>
+<!--
+   Healthy Living · 单文件高保真原型
+   低饱和治愈系波点风格 · CSS/JS/SVG 全内联 · 零外部依赖 · 断网可用
+   17 个屏幕：Splash / Login / Home / MapPage / Hospital / Doctor / AppointmentDone
+            / Insurance(4 步) / Pharmacy / PharmacyDetail / OrderConfirm / OrderDone
+            / Community / CommunityNew / Health / HealthWalk / HealthNutrition
+   主题引擎：背景 + 强调色派生方块/卡片底色；文字随明暗自适配。
+   主题：晨雾灰蓝 mist / 鼠尾草绿 sage / 陶土杏 clay / 薰衣草雾 haze / 干枯玫瑰 blush / 燕麦奶油 oat
+   强调色：dust / moss / terra / mauve / rosewd / amber / teal / coral
+-->
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Healthy Living</title>
-    <script type="module" crossorigin src="/Healthy-Living/assets/index-BoZ1CfpK.js"></script>
-    <link rel="stylesheet" crossorigin href="/Healthy-Living/assets/index-BIW-c6sq.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#7FA0B4">
+<title>Healthy Living · Healing Polka-dot Prototype</title>
+<style>
+:root{
+  /* —— 默认主题变量（被 applyTheme 动态覆盖） —— */
+  --coffee:#7C9179;          /* 主背景（鼠尾草绿默认） */
+  --coffee-d:#6C8169;
+  --coffee-l:#8FA48B;
+  --cream:#F5EFE6;           /* 卡片底色 */
+  --cream-d:#EAE1D3;
+  --cream-soft:#FBF7F0;
+  --theme-core:#83A088;
+  --tile:#E2E5DC;            /* 内嵌方块底色 */
+  --tile-2:#EEEEE5;
+  --tile-3:#D4D9CD;
+  --ink:#2F3A2E;             /* 卡片上的深色文字 */
+  --ink-soft:#5E6A5C;
+  --ink-mute:#8E9B8A;
+  --on-bg:#F5EFE6;           /* 背景上的文字（深底→浅字，浅底→深字） */
+  --on-bg-2:rgba(245,239,230,.72);
+  --on-bg-3:rgba(245,239,230,.5);
+  --on-bg-fill:rgba(245,239,230,.14);
+  --on-bg-fill-s:rgba(245,239,230,.08);
+  --on-grad:#F7F2EA;         /* 渐变大卡上的文字 */
+  --on-grad-2:rgba(247,242,234,.78);
+  --on-grad-3:rgba(247,242,234,.6);
+  --on-grad-fill:rgba(247,242,234,.16);
+  --tabbar-bg:rgba(49,37,31,.86);
+  --tabbar-line:rgba(245,239,230,.08);
+  --dot:rgba(245,239,230,.18);
+  --dot-cream:rgba(59,46,40,.05);
+
+  /* —— 强调色（被 applyTheme 动态覆盖） —— */
+  --accent:#6EB8AE;
+  --accent-d:#54A096;
+  --accent-t:#DDEEEB;
+  --rose:#C77B85;
+  --rose-t:#F4E4E6;
+  --sage:#8DA080;
+  --sage-t:#E7ECE2;
+  --gold:#D4A959;
+  --gold-t:#F6EAD2;
+  --sky:#7E9BB0;
+  --sky-t:#E4ECF1;
+  --terra:#B08968;
+  --terra-t:#EFE2D3;
+
+  --grad1:#A8BCA1;
+  --grad2:#88A082;
+  --line:rgba(59,46,40,.08);
+  --shadow:0 6px 22px rgba(30,20,15,.14);
+  --shadow-s:0 3px 12px rgba(30,20,15,.10);
+  --shadow-card:0 4px 18px rgba(40,28,20,.10);
+  --r:22px; --rs:15px; --rxs:11px;
+  --dot-size:16px 16px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#E5DDD0;
+  color:var(--ink);line-height:1.5;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* 桌面：居中手机外壳 + 柔和背景；移动端：占满 */
+.stage{
+  width:100%;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(143,174,134,.22), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(110,184,174,.18), transparent 50%),
+    linear-gradient(135deg,#E5DDD0 0%,#D8D0C2 100%);
+  padding:24px;
+}
+.phone{
+  position:relative;
+  width:100%;max-width:430px;height:100%;max-height:920px;
+  border-radius:44px;overflow:hidden;
+  background:
+    radial-gradient(var(--dot) 1.5px, transparent 2px) 0 0/var(--dot-size),
+    linear-gradient(180deg,var(--coffee-d),var(--coffee) 22%,var(--coffee));
+  box-shadow:0 30px 80px rgba(30,20,15,.30), 0 8px 24px rgba(30,20,15,.15);
+  display:flex;flex-direction:column;
+  isolation:isolate;
+}
+@media (max-width:480px){
+  .stage{padding:0;}
+  .phone{max-width:100%;height:100%;max-height:none;border-radius:0;box-shadow:none;}
+}
+
+/* —— 状态栏 —— */
+.statusbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-t) + 14px) 28px 6px;
+  font-size:14px;font-weight:700;color:var(--on-bg);flex-shrink:0;
+}
+.statusbar .icons{display:flex;gap:6px;align-items:center;}
+.statusbar svg{display:block;}
+
+/* —— 屏幕滚动区 —— */
+.screen{
+  flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  scrollbar-gutter:stable;
+  overscroll-behavior:contain;
+  position:relative;
+}
+.screen::-webkit-scrollbar{width:0;display:none;}
+
+/* —— 页面通用动画 —— */
+.page{animation:fadeUp .34s cubic-bezier(.22,.9,.3,1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* —— 顶部条 —— */
+.topbar{
+  display:flex;align-items:center;gap:12px;
+  padding:6px 20px 10px;flex-shrink:0;color:var(--on-bg);
+}
+.topbar .tb-txt{flex:1;min-width:0;}
+.topbar h1{font-size:20px;font-weight:800;color:var(--on-bg);letter-spacing:.2px;}
+.topbar .sub{font-size:12px;color:var(--on-bg-2);margin-top:2px;font-weight:500;}
+.icon-btn{
+  width:38px;height:38px;border-radius:13px;background:var(--on-bg-fill);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--on-bg);border:none;transition:.2s;
+  flex-shrink:0;
+}
+.icon-btn:active{transform:scale(.92);}
+.icon-btn svg{display:block;}
+.spacer{height:8px;}
+
+/* —— 主内容容器 —— */
+.container{padding:6px 20px 110px;}
+@media (max-width:380px){.container{padding:6px 16px 110px;}}
+
+/* —— 卡片 —— */
+.card{
+  background:var(--cream);border-radius:var(--r);padding:18px;margin-bottom:12px;
+  box-shadow:var(--shadow-card);position:relative;overflow:hidden;
+  background-image:radial-gradient(var(--dot-cream) 1.3px, transparent 1.7px);
+  background-size:15px 15px;background-position:0 0;
+}
+.card .card-row{display:flex;align-items:center;gap:12px;}
+.card .title{font-size:16px;font-weight:800;color:var(--ink);}
+.card .subtle{font-size:13px;color:var(--ink-soft);font-weight:500;}
+
+/* —— 渐变大卡 —— */
+.gradient-card{
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  border-radius:var(--r);padding:22px;margin-bottom:14px;
+  color:var(--on-grad);box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.gradient-card::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(var(--on-grad-fill) 1.5px, transparent 2px) 0 0/12px 12px;
+  pointer-events:none;
+}
+.gradient-card .gh{font-size:22px;font-weight:800;color:var(--on-grad);}
+.gradient-card .gs{font-size:13px;color:var(--on-grad-2);margin-top:4px;font-weight:500;}
+.gradient-card .gv{font-size:11px;color:var(--on-grad-3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+
+/* —— 头像 —— */
+.avatar{
+  width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:#fff;flex-shrink:0;letter-spacing:.5px;
+}
+.avatar.lg{width:64px;height:64px;border-radius:18px;font-size:22px;}
+.avatar.xl{width:80px;height:80px;border-radius:22px;font-size:26px;}
+
+/* —— 按钮 —— */
+.btn{
+  width:100%;padding:15px 18px;border-radius:15px;border:none;cursor:pointer;
+  background:var(--accent);color:#fff;font-size:15px;font-weight:800;letter-spacing:.5px;
+  font-family:inherit;transition:.2s;
+  box-shadow:0 4px 14px rgba(110,184,174,.35);
+}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+.btn.light{background:var(--cream);color:var(--ink);box-shadow:var(--shadow-s);}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--tile-3);box-shadow:none;}
+.btn.ghost:active{background:var(--tile-2);}
+.btn.tiny{padding:9px 14px;font-size:13px;border-radius:12px;width:auto;display:inline-flex;align-items:center;gap:6px;}
+.mt{margin-top:14px;}
+
+/* —— 两列网格 —— */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.tile{
+  background:var(--cream);border-radius:var(--r);padding:18px;text-align:center;
+  box-shadow:var(--shadow-card);cursor:pointer;transition:.2s;
+  background-image:radial-gradient(var(--dot-cream) 1.3px, transparent 1.7px);
+  background-size:15px 15px;
+}
+.tile:active{transform:scale(.97);}
+.tile .big{font-size:34px;line-height:1;}
+.tile .title{font-size:14px;font-weight:800;color:var(--ink);margin-top:8px;}
+
+/* —— pill / 徽章 —— */
+.pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 11px;border-radius:11px;font-size:11px;font-weight:700;
+  background:var(--sage-t);color:var(--sage);letter-spacing:.3px;
+}
+.pill.light{background:var(--tile);color:var(--ink-soft);}
+.pill.rose{background:var(--rose-t);color:var(--rose);}
+.pill.amber{background:var(--amber-t,var(--gold-t));color:var(--gold);}
+.pill.terra{background:var(--terra-t);color:var(--terra);}
+
+/* —— 星星 —— */
+.stars{color:var(--gold);font-size:13px;font-weight:700;}
+.stars .subtle{color:var(--ink-mute);font-weight:500;font-size:11px;margin-left:3px;}
+
+/* —— 输入框 —— */
+.input{
+  width:100%;padding:13px 14px;border:2px solid var(--line);border-radius:13px;
+  font-size:15px;background:var(--cream-soft);color:var(--ink);font-family:inherit;
+  margin-bottom:10px;
+}
+.input:focus{outline:none;border-color:var(--accent);}
+
+/* —— 时间槽位 —— */
+.slots{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;}
+.slot{
+  padding:9px 14px;border-radius:11px;font-size:13px;font-weight:700;
+  background:var(--tile);color:var(--ink);cursor:pointer;transition:.2s;
+  border:2px solid transparent;
+}
+.slot:active{transform:scale(.94);}
+.slot.sel{background:var(--accent-t);border-color:var(--accent);color:var(--accent-d);}
+
+/* —— 列表行 —— */
+.row{
+  display:flex;align-items:center;gap:12px;padding:14px;
+  background:var(--cream);border-radius:var(--rs);margin-bottom:10px;
+  box-shadow:var(--shadow-card);cursor:pointer;transition:.2s;
+  background-image:radial-gradient(var(--dot-cream) 1.3px, transparent 1.7px);
+  background-size:15px 15px;
+}
+.row:active{transform:scale(.99);}
+.row .grow{flex:1;min-width:0;}
+.row .title{font-size:15px;font-weight:800;color:var(--ink);}
+.row .subtle{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.row .price{font-size:15px;font-weight:800;color:var(--accent-d);}
+
+/* —— Map 装饰区 —— */
+.map{
+  position:relative;height:170px;border-radius:var(--r);margin-bottom:14px;overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 30%, var(--tile) 1px, transparent 2px) 0 0/12px 12px,
+    radial-gradient(circle at 70% 60%, var(--tile-2) 1px, transparent 2px) 4px 4px/14px 14px,
+    linear-gradient(135deg,var(--accent-t),var(--cream));
+  box-shadow:var(--shadow-card);
+}
+.map::before{
+  content:"";position:absolute;left:0;right:0;top:50%;height:8px;background:var(--cream-soft);
+  transform:translateY(-50%);box-shadow:inset 0 2px 0 rgba(255,255,255,.6), 0 2px 4px rgba(0,0,0,.05);
+}
+.map::after{
+  content:"";position:absolute;top:0;bottom:0;left:35%;width:6px;background:var(--cream-soft);
+  box-shadow:inset 2px 0 0 rgba(255,255,255,.6), 0 0 4px rgba(0,0,0,.05);
+}
+.map-pin{
+  position:absolute;width:34px;height:34px;border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:13px;box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+.map-pin > span{transform:rotate(45deg);}
+
+/* —— 底部 Tab —— */
+.tabbar{
+  position:absolute;left:16px;right:16px;bottom:calc(var(--safe-b) + 12px);
+  display:flex;padding:8px 8px calc(var(--safe-b) + 0px);
+  background:var(--tabbar-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:22px;border:1px solid var(--tabbar-line);z-index:50;
+  box-shadow:0 8px 30px rgba(0,0,0,.18);
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 0;cursor:pointer;color:var(--on-bg-3);position:relative;transition:.2s;
+}
+.tab .ti{display:flex;align-items:center;justify-content:center;height:24px;transition:.2s;}
+.tab .ti svg{width:22px;height:22px;transition:.2s;}
+.tab .tl{font-size:10px;font-weight:700;letter-spacing:.3px;}
+.tab.on{color:var(--accent);}
+.tab.on .ti svg{transform:translateY(-2px) scale(1.06);stroke-width:2.3;}
+
+/* —— 大按钮组（保险步骤 / 社区发帖） —— */
+.tabs{display:flex;gap:8px;padding:5px;background:var(--tile);border-radius:14px;margin-bottom:14px;}
+.tabs .tab-pill{
+  flex:1;padding:9px 12px;text-align:center;font-size:13px;font-weight:700;color:var(--ink-soft);
+  border-radius:10px;cursor:pointer;transition:.2s;
+}
+.tabs .tab-pill.on{background:var(--cream);color:var(--ink);box-shadow:var(--shadow-s);}
+
+/* —— 圆形进度 —— */
+.ring{
+  width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle,var(--cream) 55%,transparent 56%);
+  position:relative;margin:10px auto;
+}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.ring-track{stroke:var(--tile);}
+.ring-progress{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .6s;}
+.ring-inner{text-align:center;}
+.ring-inner .num{font-size:32px;font-weight:800;color:var(--ink);line-height:1;}
+.ring-inner .lab{font-size:12px;color:var(--ink-soft);margin-top:4px;}
+
+/* —— 进度条 —— */
+.progress-bar{
+  height:8px;background:var(--tile);border-radius:6px;overflow:hidden;
+}
+.progress-bar > div{
+  height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-d));
+  border-radius:6px;transition:width .5s;
+}
+
+/* —— 星点评分 —— */
+.star-rate{font-size:30px;cursor:pointer;display:flex;justify-content:center;gap:6px;margin:14px 0;}
+.star-rate span{color:var(--tile-3);transition:.2s;}
+.star-rate span.on{color:var(--gold);}
+
+/* —— Toast —— */
+.toast-wrap{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;pointer-events:none;}
+.toast{
+  background:var(--cream);color:var(--ink);padding:11px 20px;border-radius:14px;
+  font-size:13px;font-weight:700;box-shadow:var(--shadow);
+  margin-bottom:8px;opacity:1;animation:tin .3s ease;
+  border:1px solid var(--line);
+}
+.toast.good{background:var(--sage-t);color:var(--sage);}
+@keyframes tin{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+
+/* —— Sheet（底部弹层：主题设置） —— */
+.sheet-mask{
+  position:fixed;inset:0;background:rgba(25,16,12,.55);z-index:200;
+  opacity:0;pointer-events:none;transition:.3s;
+}
+.sheet-mask.show{opacity:1;pointer-events:auto;}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;
+  background:var(--cream-soft);
+  border-radius:26px 26px 0 0;padding:8px 22px calc(var(--safe-b) + 24px);z-index:201;
+  transform:translateY(105%);transition:transform .34s cubic-bezier(.22,.9,.3,1);
+  max-height:88%;overflow-y:auto;
+}
+.sheet.show{transform:translateY(0);}
+.sheet-bar{width:40px;height:4px;border-radius:4px;background:var(--tile-3);margin:8px auto 16px;}
+.sheet h3{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:4px;}
+.sheet .sub{font-size:12px;color:var(--ink-soft);margin-bottom:18px;}
+
+/* —— 主题预览块 —— */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.theme-sw{
+  aspect-ratio:1.4;border-radius:14px;cursor:pointer;border:3px solid transparent;
+  position:relative;overflow:hidden;transition:.15s;
+  background-size:14px 14px,100% 100%;
+  box-shadow:var(--shadow-s);
+}
+.theme-sw .tsw-name{
+  position:absolute;left:0;right:0;bottom:0;
+  font-size:10px;font-weight:700;text-align:center;padding:5px 2px;
+  background:rgba(0,0,0,.32);color:#fff;
+}
+.theme-sw.sel{border-color:var(--accent);transform:scale(1.04);}
+.theme-sw.sel::after{
+  content:"✓";position:absolute;top:5px;right:6px;width:18px;height:18px;
+  background:var(--accent);color:#fff;border-radius:50%;font-size:11px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;
+}
+.accent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.accent-sw{
+  aspect-ratio:1;border-radius:14px;cursor:pointer;border:3px solid transparent;
+  transition:.15s;position:relative;
+}
+.accent-sw.sel{border-color:var(--ink);transform:scale(1.06);}
+.accent-sw.sel::after{
+  content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:14px;
+}
+.sec-title{
+  display:flex;align-items:center;gap:8px;margin:18px 4px 10px;
+}
+.sec-title h3{font-size:14px;font-weight:800;color:var(--ink);letter-spacing:.5px;}
+.sec-title .st-cap{font-size:11px;color:var(--ink-soft);font-weight:500;margin-left:6px;}
+
+/* —— 成功页 —— */
+.success-page{
+  text-align:center;padding:60px 24px 24px;
+}
+.success-icon{
+  width:90px;height:90px;border-radius:50%;background:var(--sage-t);color:var(--sage);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+  font-size:42px;animation:pop .5s cubic-bezier(.22,.9,.3,1);
+}
+@keyframes pop{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+.success-page h2{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+.success-page .subtle{color:var(--ink-soft);font-size:14px;line-height:1.6;}
+.success-page .info-card{
+  background:var(--cream);border-radius:var(--r);padding:18px;margin:24px 0;text-align:left;
+  box-shadow:var(--shadow-card);
+  background-image:radial-gradient(var(--dot-cream) 1.3px, transparent 1.7px);
+  background-size:15px 15px;
+}
+.success-page .info-card .title{font-weight:800;color:var(--ink);font-size:14px;}
+
+/* —— 字体 emoji 圆块（点缀用） —— */
+.emoji-blob{
+  width:54px;height:54px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  background:var(--tile);font-size:26px;
+}
+
+/* —— 简单的浮动按钮区 —— */
+.fab{
+  position:absolute;right:20px;bottom:calc(var(--safe-b) + 90px);
+  width:54px;height:54px;border-radius:18px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer;z-index:40;
+}
+.fab:active{transform:scale(.94);}
+
+/* —— 隐藏 —— */
+.hidden{display:none !important;}
+.center{text-align:center;}
+
+/* —— 沉浸式：让渐变大卡上的文字色更稳 —— */
+.on-grad{color:var(--on-grad);}
+.on-grad-2{color:var(--on-grad-2);}
+.on-grad-3{color:var(--on-grad-3);}
+
+/* —— Splash —— */
+.splash{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;padding:80px 24px;text-align:center;color:var(--on-bg);
+}
+.splash .logo{
+  width:96px;height:96px;border-radius:30px;background:var(--cream-soft);
+  display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
+.splash h1{font-size:28px;font-weight:800;color:var(--on-bg);margin-bottom:6px;}
+.splash .tag{font-size:13px;color:var(--on-bg-2);}
+.splash .dots{margin-top:30px;display:flex;gap:6px;}
+.splash .dots span{width:7px;height:7px;border-radius:50%;background:var(--on-bg-3);animation:dotPulse 1.4s infinite;}
+.splash .dots span:nth-child(2){animation-delay:.2s;}
+.splash .dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dotPulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+/* —— 极简：让卡片里段落更舒服 —— */
+p{line-height:1.55;}
+.avatar-stack{display:flex;}
+.avatar-stack .avatar{margin-left:-8px;border:2px solid var(--cream);}
+.avatar-stack .avatar:first-child{margin-left:0;}
+.mini-stat{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--tile);border-radius:13px;}
+.mini-stat .ico{
+  width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:var(--cream);color:var(--accent-d);font-size:16px;
+}
+.mini-stat .lbl{font-size:11px;color:var(--ink-soft);font-weight:600;}
+.mini-stat .val{font-size:15px;font-weight:800;color:var(--ink);}
+
+.stat-row{display:flex;gap:8px;margin-bottom:12px;}
+.stat-row .mini-stat{flex:1;}
+
+/* —— 餐次行（Health Nutrition） —— */
+.meal-row{display:flex;align-items:center;gap:12px;padding:14px;background:var(--cream);border-radius:var(--rs);margin-bottom:10px;box-shadow:var(--shadow-card);}
+.meal-row .meal-emoji{width:42px;height:42px;border-radius:13px;background:var(--tile);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.meal-row .title{font-size:14px;font-weight:800;color:var(--ink);}
+.meal-row .subtle{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.meal-row .time{font-size:11px;color:var(--ink-mute);font-weight:600;}
+
+/* —— input row 三列（Health 表单） —— */
+.input-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.input-grid .input{margin-bottom:0;}
+
+/* —— 头像列 / 头像方块（社区帖子） —— */
+.post-card{
+  background:var(--cream);border-radius:var(--r);padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow-card);
+  background-image:radial-gradient(var(--dot-cream) 1.3px, transparent 1.7px);
+  background-size:15px 15px;
+}
+.post-meta{display:flex;align-items:center;gap:10px;}
+.post-meta .meta-txt .name{font-size:14px;font-weight:800;color:var(--ink);}
+.post-meta .meta-txt .time{font-size:11px;color:var(--ink-mute);font-weight:500;}
+.post-title{font-size:15px;font-weight:800;color:var(--ink);margin:12px 0 6px;}
+.post-body{font-size:13px;color:var(--ink-soft);line-height:1.6;}
+.post-stats{display:flex;gap:18px;margin-top:12px;font-size:12px;color:var(--ink-soft);font-weight:600;}
+.post-stats span{display:inline-flex;align-items:center;gap:4px;}
+
+/* —— 设置入口（Home 顶部齿轮） —— */
+.gear-btn{
+  position:absolute;top:calc(var(--safe-t) + 60px);right:20px;
+  width:38px;height:38px;border-radius:13px;background:var(--on-bg-fill);color:var(--on-bg);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;
+}
+
+/* —— step indicator（Insurance 多步） —— */
+.step-ind{display:flex;gap:6px;margin-bottom:16px;}
+.step-ind .d{height:4px;flex:1;border-radius:4px;background:var(--tile-3);}
+.step-ind .d.on{background:var(--accent);}
+
+/* —— 列表行箭头 —— */
+.chev{color:var(--ink-mute);}
+
+/* —— 工具：撑开底栏占位 —— */
+.tabbar-spacer{height:84px;}
+
+/* —— map hero 装饰 —— */
+.map-hero{
+  display:flex;gap:8px;margin-bottom:14px;
+}
+.map-hero .col{flex:1;}
+
+/* —— empty state —— */
+.empty{text-align:center;padding:30px;color:var(--ink-mute);font-size:13px;}
+
+/* —— 适配更小屏 —— */
+@media (max-height:700px){
+  .statusbar{padding:calc(var(--safe-t) + 6px) 28px 4px;font-size:13px;}
+  .topbar{padding:0 20px 6px;}
+  .topbar h1{font-size:18px;}
+  .container{padding:6px 18px 100px;}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="statusbar" id="statusbar">
+      <span id="clock">9:41</span>
+      <span class="icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M1 9h2v3H1zM5 7h2v5H5zM9 4h2v8H9zM13 1h2v11h-2z" fill="currentColor"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C10.2 2.5 12.1 3.6 13.2 5.3L14.5 4.4C13 2.4 10.7 1.2 8 1.2S3 2.4 1.5 4.4l1.3.9C3.9 3.6 5.8 2.5 8 2.5zM8 5.7c1.1 0 2.1.5 2.7 1.4l1.3-1C11.1 4.9 9.6 4.2 8 4.2S4.9 4.9 4 6.1l1.3 1c.6-.9 1.6-1.4 2.7-1.4z" fill="currentColor"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.5" y="1" width="20" height="10" rx="2.5" stroke="currentColor"/><rect x="2" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="0.5" fill="currentColor"/></svg>
+      </span>
+    </div>
+    <div class="screen" id="screen"></div>
+    <nav class="tabbar hidden" id="tabbar"></nav>
+  </div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="sheet-mask" id="mask" onclick="closeSheet()"></div>
+<div class="sheet" id="themeSheet"></div>
+
+<script>
+/* =========================================================
+   Healthy Living · 单文件原型 — 全部逻辑
+   ========================================================= */
+
+/* —— SVG 图标库（stroke:currentColor 自动跟随文字/主题色） —— */
+const ICN={
+  home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h5v-5h4v5h5v-9.5"/>',
+  pin:'<path d="M12 22c5-5 7-8 7-12a7 7 0 1 0-14 0c0 4 2 7 7 12z"/><circle cx="12" cy="10" r="2.6"/>',
+  pill:'<rect x="3" y="9" width="18" height="6" rx="3"/><path d="M12 9v6"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+  leaf:'<path d="M5 19c0-9 6-15 15-15-1 9-7 14-15 15z"/><path d="M5 19c4-4 8-7 13-9"/>',
+  arrowL:'<path d="M15 5l-7 7 7 7"/>',
+  arrowR:'<path d="M9 6l6 6-6 6"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  cross:'<path d="M6 6l12 12M18 6 6 18"/>',
+  star:'<path d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 17l-5.3 2.6 1-5.8L3.5 9.7l5.9-.9z"/>',
+  heart:'<path d="M12 21s-7-5-9-10a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 5-9 10-9 10z"/>',
+  cam:'<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7l1.5-2.5h4L15.5 7"/><circle cx="12" cy="13.5" r="3.2"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M4.2 7.5l2.1 1.2M17.7 15.3l2.1 1.2M4.2 16.5l2.1-1.2M17.7 8.7l2.1-1.2"/>',
+  palette:'<path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-3.9-4-6.4-9-6.4z"/><circle cx="7.5" cy="11.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.5" cy="11.5" r="1.1" fill="currentColor" stroke="none"/>',
+  walk:'<circle cx="13" cy="4" r="2"/><path d="M8 22l3-7 2 2 2 5M11 15l-2-4 4-4 3 2 3-1"/>',
+  doc:'<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  shield:'<path d="M12 3 4 6v6c0 5 4 8 8 9 4-1 8-4 8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2H4.5z"/><path d="M9.5 18.5a2.5 2.5 0 0 0 5 0"/>',
+  share:'<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 11 16 7M8.2 13 16 17"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  upload:'<path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/>',
+  car:'<path d="M5 16v-4l2-5h10l2 5v4"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>',
+  more:'<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+  pencil:'<path d="M16 4l4 4L8 20H4v-4z"/><path d="M13.5 6.5l4 4"/>',
+  trend:'<path d="M3 17l5-5 3.5 3.5L20 7"/><path d="M15 7h5v5"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 4v4h-4M21 12a9 9 0 0 1-15 6.7L3 16M3 20v-4h4"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/>',
+  filter:'<path d="M4 5h16l-6 8v6l-4-2v-4z"/>',
+  bookmark:'<path d="M6 4h12v17l-6-4-6 4z"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/>',
+  file:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>',
+  send:'<path d="M3 20l18-8L3 4l3 8-3 8z"/><path d="M6 12h11"/>',
+};
+function icn(name,size,sw){
+  const p=ICN[name]; if(!p) return '';
+  const s=size||18, w=sw||2;
+  return `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" style="display:block">${p}</svg>`;
+}
+
+/* —— 业务数据（迁移自 src/data.js） —— */
+const DATA={
+  doctors:[
+    {id:'d1',name:'Dr. Jack Anderson',specialty:'Cardiologist',hospital:'ABC Hospital',rating:4.9,reviews:328,avatar:'JA',color:'#6EB8AE',about:'Senior cardiologist with 15+ years of experience in preventive heart care.',availability:['09:00','09:30','10:00','11:00','14:00','15:30']},
+    {id:'d2',name:'Dr. Jany Smith',specialty:'General Practitioner',hospital:'ABC Hospital',rating:4.7,reviews:211,avatar:'JS',color:'#7FA0B4',about:'Family medicine specialist focused on holistic and preventive care.',availability:['10:30','11:00','13:00','13:30','16:00']},
+    {id:'d3',name:'Dr. Amelia Chen',specialty:'Pediatrician',hospital:'Green Valley Clinic',rating:4.8,reviews:156,avatar:'AC',color:'#8FAE86',about:'Compassionate pediatrician with focus on childhood nutrition and development.',availability:['09:30','10:30','11:30','14:30','15:30']},
+  ],
+  hospitals:[
+    {id:'h1',name:'ABC Hospital',distance:'1.0 km',type:'General',wait:'12 min',color:'#6EB8AE'},
+    {id:'h2',name:'City Care Hospital',distance:'2.4 km',type:'Cardiology',wait:'20 min',color:'#7FA0B4'},
+    {id:'h3',name:'Green Valley Clinic',distance:'3.1 km',type:'Pediatrics',wait:'8 min',color:'#8FAE86'},
+  ],
+  pharmacies:[
+    {id:'p1',name:'ABC Pharmacy',distance:'1.0 km',rating:4.8,color:'#6EB8AE'},
+    {id:'p2',name:'GSK Pharmacy',distance:'2.6 km',rating:4.5,color:'#7FA0B4'},
+    {id:'p3',name:'LAB Pharmacy',distance:'4.0 km',rating:4.6,color:'#8FAE86'},
+  ],
+  medicines:{
+    p1:[
+      {id:'m1',name:'Cardio Plus',desc:'Heart health support',price:29.99,tag:'Prescription'},
+      {id:'m2',name:'Zyrtec Tablets',desc:'Allergy relief 10mg',price:12.49,tag:'OTC'},
+      {id:'m3',name:'IBU 400',desc:'Ibuprofen 400mg',price:8.99,tag:'OTC'},
+      {id:'m4',name:'Omega-3 Softgels',desc:'Heart & brain 1000mg',price:18.50,tag:'OTC'},
+    ],
+    p2:[
+      {id:'m5',name:'CIP Pills',desc:'Antibiotic course',price:15.99,tag:'Prescription'},
+      {id:'m6',name:'Cardio Plus 500',desc:'Heart health 500mg',price:34.99,tag:'Prescription'},
+    ],
+    p3:[
+      {id:'m7',name:'Vitamin D3',desc:'Immunity support',price:11.99,tag:'OTC'},
+      {id:'m8',name:'Zyrtec Tablets',desc:'Allergy relief 10mg',price:12.49,tag:'OTC'},
+      {id:'m9',name:'Magnesium Glycinate',desc:'Sleep & relaxation',price:16.99,tag:'OTC'},
+    ],
+  },
+  posts:[
+    {id:'post1',author:'Emma W.',avatar:'EW',color:'#6EB8AE',time:'2h',title:'Heart Disease Awareness',body:'Regular checkups and a balanced diet can reduce risk by 60%. Share your tips below!',likes:124,comments:32,shares:18},
+    {id:'post2',author:'Liam K.',avatar:'LK',color:'#7FA0B4',time:'5h',title:'My 30-min walk routine',body:'Started walking every morning. Feeling more energetic already — small steps add up.',likes:88,comments:14,shares:6},
+    {id:'post3',author:'Sophia M.',avatar:'SM',color:'#8FAE86',time:'1d',title:'Sleep & recovery',body:'Switched to a wind-down routine: dim lights, no phone 30min before bed. Game-changer.',likes:201,comments:47,shares:22},
+  ],
+  insuranceTypes:[
+    {id:'i1',name:'Basic Care',desc:'GP visits & essentials',color:'#6EB8AE'},
+    {id:'i2',name:'Plus Plan',desc:'Includes specialist care',color:'#7FA0B4'},
+    {id:'i3',name:'Family Cover',desc:'Up to 5 members',color:'#8FAE86'},
+  ],
+};
+
+/* —— 主题外观 —— */
+const THEMES=[
+  {id:'mist',  name:'晨雾灰蓝',coffee:'#6E8494',coffeeD:'#5F7484',coffeeL:'#8096A6',grad1:'#9DB2C0',grad2:'#7B93A3',dark:true},
+  {id:'sage',  name:'鼠尾草绿',coffee:'#7C9179',coffeeD:'#6C8169',coffeeL:'#8FA48B',grad1:'#A8BCA1',grad2:'#88A082',dark:true},
+  {id:'clay',  name:'陶土杏',  coffee:'#B08968',coffeeD:'#9E7859',coffeeL:'#C09A7B',grad1:'#D2AE8C',grad2:'#B98F6E',dark:true},
+  {id:'haze',  name:'薰衣草雾',coffee:'#8B82A6',coffeeD:'#7B7296',coffeeL:'#9D95B6',grad1:'#B3A9CE',grad2:'#948BB4',dark:true},
+  {id:'blush', name:'干枯玫瑰',coffee:'#B37E86',coffeeD:'#A26E76',coffeeL:'#C2919A',grad1:'#D6A6AE',grad2:'#BE8890',dark:true},
+  {id:'oat',   name:'燕麦奶油',coffee:'#EFE6D6',coffeeD:'#E5DBC8',coffeeL:'#F7F2EA',grad1:'#D6C4AC',grad2:'#BFA88B',dark:false},
+];
+const ACCENTS=[
+  {id:'teal',  c:'#6EB8AE',d:'#54A096'},
+  {id:'dust',  c:'#7FA0B4',d:'#688BA1'},
+  {id:'moss',  c:'#8FAE86',d:'#77976E'},
+  {id:'terra', c:'#B08968',d:'#9A7252'},
+  {id:'mauve', c:'#A794C0',d:'#8F7BAC'},
+  {id:'rosewd',c:'#D08D98',d:'#BE7480'},
+  {id:'amber', c:'#D4A959',d:'#BC8E3C'},
+  {id:'coral', c:'#E89A82',d:'#D67F66'},
+];
+
+const TMAP=Object.fromEntries(THEMES.map(t=>[t.id,t]));
+
+/* —— 主题设置 —— */
+const SETTINGS={
+  bg:'sage',accent:'teal',dots:true,
+  customBg:null,customAccent:null,
+};
+try{
+  const saved=JSON.parse(localStorage.getItem('hl_theme')||'null');
+  if(saved) Object.assign(SETTINGS,saved);
+}catch(e){}
+
+/* —— 颜色工具 —— */
+function parseRGB(c){c=(c||'').trim();if(c[0]==='#'){const h=c.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}const m=c.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);return m?[+m[1],+m[2],+m[3]]:[245,239,230];}
+function toHex2(n){return Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0');}
+function mixHex(a,b,ratio){const A=parseRGB(a),B=parseRGB(b);return '#'+toHex2(A[0]+(B[0]-A[0])*ratio)+toHex2(A[1]+(B[1]-A[1])*ratio)+toHex2(A[2]+(B[2]-A[2])*ratio);}
+function isDarkHex(hex){const h=hex.replace('#','');const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return (0.299*r+0.587*g+0.114*b)<150;}
+function shadeHex(hex,ratio){const h=hex.replace('#','');let r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);r=Math.round(r*(1-ratio));g=Math.round(g*(1-ratio));b=Math.round(b*(1-ratio));return `rgb(${r},${g},${b})`;}
+function tintHex(hex,ratio){const h=hex.replace('#','');let r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);r=Math.round(r+(255-r)*ratio);g=Math.round(g+(255-g)*ratio);b=Math.round(b+(255-b)*ratio);return `rgb(${r},${g},${b})`;}
+
+function applyTheme(){
+  const t=SETTINGS;
+  const rs=document.documentElement.style;
+  let isDark,bgHex,coffeeDHex,g1Hex,g2Hex;
+  const th=TMAP[t.bg]||TMAP.sage;
+  bgHex=th.coffee;isDark=th.dark!==false;coffeeDHex=th.coffeeD;
+  g1Hex=th.grad1;g2Hex=th.grad2;
+  rs.setProperty('--coffee',th.coffee);
+  rs.setProperty('--coffee-d',th.coffeeD);
+  rs.setProperty('--coffee-l',th.coffeeL);
+  rs.setProperty('--grad1',th.grad1);
+  rs.setProperty('--grad2',th.grad2);
+
+  const gMix=mixHex(g1Hex,g2Hex,.5);
+  const gDark=isDarkHex(gMix);
+  if(gDark){
+    rs.setProperty('--on-grad','#F7F2EA');
+    rs.setProperty('--on-grad-2','rgba(247,242,234,.78)');
+    rs.setProperty('--on-grad-3','rgba(247,242,234,.6)');
+    rs.setProperty('--on-grad-fill','rgba(247,242,234,.16)');
+  }else{
+    rs.setProperty('--on-grad','#3E332C');
+    rs.setProperty('--on-grad-2','rgba(62,51,44,.74)');
+    rs.setProperty('--on-grad-3','rgba(62,51,44,.55)');
+    rs.setProperty('--on-grad-fill','rgba(62,51,44,.12)');
+  }
+
+  let creamHex;
+  if(!isDark){
+    creamHex='#FFFFFF';
+    rs.setProperty('--ink','#4A3A32');
+    rs.setProperty('--cream','#FFFFFF');
+    rs.setProperty('--cream-d','#F1EADD');
+    rs.setProperty('--cream-soft','#FBF7F0');
+    rs.setProperty('--dot','rgba(75,58,50,.10)');
+    rs.setProperty('--on-bg','#463A32');
+    rs.setProperty('--on-bg-2','rgba(70,58,50,.72)');
+    rs.setProperty('--on-bg-3','rgba(70,58,50,.5)');
+    rs.setProperty('--on-bg-fill','rgba(70,58,50,.10)');
+    rs.setProperty('--on-bg-fill-s','rgba(70,58,50,.055)');
+    rs.setProperty('--tabbar-bg','rgba(255,255,255,.82)');
+    rs.setProperty('--tabbar-line','rgba(70,58,50,.10)');
+  }else{
+    creamHex='#F5EFE6';
+    rs.setProperty('--ink','#2F3A2E');
+    rs.setProperty('--cream','#F5EFE6');
+    rs.setProperty('--cream-d','#EAE1D3');
+    rs.setProperty('--cream-soft','#FBF7F0');
+    rs.setProperty('--dot','rgba(245,239,230,.18)');
+    rs.setProperty('--on-bg','#F5EFE6');
+    rs.setProperty('--on-bg-2','rgba(245,239,230,.72)');
+    rs.setProperty('--on-bg-3','rgba(245,239,230,.5)');
+    rs.setProperty('--on-bg-fill','rgba(245,239,230,.14)');
+    rs.setProperty('--on-bg-fill-s','rgba(245,239,230,.08)');
+    rs.setProperty('--tabbar-bg',shadeHex(coffeeDHex,.06).startsWith('rgb')?'rgba(49,37,31,.82)':shadeHex(coffeeDHex,.06));
+    rs.setProperty('--tabbar-line','rgba(245,239,230,.08)');
+  }
+  if(!t.dots)rs.setProperty('--dot','transparent');
+
+  const ac=ACCENTS.find(a=>a.id===t.accent)||ACCENTS[0];
+  const acC=ac.c,acD=ac.d;
+  rs.setProperty('--accent',acC);
+  rs.setProperty('--accent-d',acD);
+  rs.setProperty('--accent-t',tintHex(acC,.78));
+
+  // 方块/卡片派生：背景 38% + 强调 62% → themeCore；再融合到 cream
+  const themeCore=mixHex(bgHex,acC,.62);
+  const surfaceRatio=isDark?.16:.18;
+  const surfaceBase=mixHex(creamHex,themeCore,surfaceRatio);
+  const surfaceSoft=mixHex('#ffffff',themeCore,.10);
+  const surfaceD=mixHex(creamHex,themeCore,.28);
+  const tileRatio=isDark?.36:.40;
+  const tileBase=mixHex(surfaceBase,themeCore,tileRatio);
+  const tile2=mixHex(surfaceBase,themeCore,.24);
+  const tile3=mixHex(surfaceBase,themeCore,.52);
+  rs.setProperty('--theme-core',themeCore);
+  rs.setProperty('--cream',surfaceBase);
+  rs.setProperty('--cream-d',surfaceD);
+  rs.setProperty('--cream-soft',surfaceSoft);
+  rs.setProperty('--tile',tileBase);
+  rs.setProperty('--tile-2',tile2);
+  rs.setProperty('--tile-3',tile3);
+  // 浅主题下让卡片纹路更轻
+  if(!isDark){
+    rs.setProperty('--dot-cream','rgba(70,58,50,.04)');
+  }else{
+    rs.setProperty('--dot-cream','rgba(59,46,40,.05)');
+  }
+}
+
+/* —— 工具 —— */
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function pickColor(seed){return ACCENTS[Math.abs(hashCode(seed))%ACCENTS.length].c;}
+function hashCode(s){let h=0;for(let i=0;i<s.length;i++)h=(h<<5)-h+s.charCodeAt(i)|0;return h;}
+function toast(msg,cls){
+  const el=document.createElement('div');el.className='toast '+(cls||'');el.textContent=msg;
+  document.getElementById('toastWrap').appendChild(el);
+  setTimeout(()=>{el.style.transition='.4s';el.style.opacity='0';el.style.transform='translateY(-10px)';setTimeout(()=>el.remove(),400);},2400);
+}
+function openSheet(id){document.getElementById('mask').classList.add('show');document.getElementById(id).classList.add('show');}
+function closeSheet(){document.getElementById('mask').classList.remove('show');document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show'));}
+
+/* =========================================================
+   路由：每个 tab 独立栈
+   ========================================================= */
+const TABS=[
+  {id:'home',label:'Home',icon:'home'},
+  {id:'map',label:'Map',icon:'pin'},
+  {id:'pharmacy',label:'Pharmacy',icon:'pill'},
+  {id:'community',label:'Community',icon:'chat'},
+  {id:'health',label:'Health',icon:'leaf'},
+];
+const TAB_IDS=TABS.map(t=>t.id);
+const stacks={home:[{name:'home'}],map:[{name:'map'}],pharmacy:[{name:'pharmacy'}],community:[{name:'community'}],health:[{name:'health'}]};
+let activeTab='home';
+const state={cart:{},selectedSlot:{},insuranceStep:{},insuranceFile:{},insuranceType:{},rating:{},shared:{},plan:{},healthForm:{gender:'Female',age:'',height:'',weight:''},newPost:{title:'',body:''}};
+
+function navTo(name,params,opts){
+  params=params||{};
+  const stack=stacks[activeTab];
+  if(opts&&opts.reset){stacks[activeTab]=[{name,params:params||{}}];}
+  else{stack.push({name,params});}
+  render();
+}
+function back(){
+  const stack=stacks[activeTab];
+  if(stack.length>1){stack.pop();render();}
+}
+function switchTab(id){
+  if(!TAB_IDS.includes(id))return;
+  activeTab=id;
+  render();
+}
+
+/* =========================================================
+   渲染：调度 → 当前屏函数
+   ========================================================= */
+const screen=document.getElementById('screen');
+const tabbar=document.getElementById('tabbar');
+
+function renderTabbar(){
+  const cur=stacks[activeTab][stacks[activeTab].length-1];
+  const isTabRoute=TAB_IDS.includes(cur.name);
+  if(!isTabRoute){tabbar.classList.add('hidden');return;}
+  tabbar.classList.remove('hidden');
+  tabbar.innerHTML=TABS.map(t=>{
+    const on=(t.id===activeTab);
+    return `<div class="tab${on?' on':''}" onclick="switchTab('${t.id}')">
+      <div class="ti">${icn(t.icon,22,on?2.3:1.9)}</div>
+      <div class="tl">${t.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function render(){
+  renderTabbar();
+  const cur=stacks[activeTab][stacks[activeTab].length-1];
+  const fn=RENDERERS[cur.name];
+  if(!fn){screen.innerHTML='<div class="empty">Unknown screen</div>';return;}
+  screen.innerHTML=`<div class="page">${fn(cur.params||{})}</div>`;
+  screen.scrollTop=0;
+  // home 右上齿轮
+  if(cur.name==='home'){
+    const g=document.createElement('div');
+    g.className='gear-btn';g.innerHTML=icn('gear',20,2);g.title='Theme';
+    g.onclick=openTheme;screen.appendChild(g);
+  }
+}
+
+/* —— 通用顶部条 —— */
+function topbar(opts){
+  const {title,sub,back,onBack}=opts||{};
+  const showBack=back||onBack;
+  return `<div class="topbar">
+    ${showBack?`<button class="icon-btn" onclick="${onBack?`(${onBack})()`:'back()'}">${icn('arrowL',18,2)}</button>`:''}
+    <div class="tb-txt">
+      <h1>${esc(title||'')}</h1>
+      ${sub?`<div class="sub">${esc(sub)}</div>`:''}
+    </div>
+    <button class="icon-btn" onclick="${onBack?`(${onBack})()`:'back()'}">${icn('more',18,2)}</button>
+  </div>`;
+}
+
+/* =========================================================
+   屏幕渲染
+   ========================================================= */
+const RENDERERS={
+
+  /* —— 启动页 —— */
+  splash(){
+    return `<div class="splash">
+      <div class="logo">🤲</div>
+      <h1>Healthy Living</h1>
+      <div class="tag">Your care, in one place</div>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>`;
+  },
+
+  /* —— 登录 —— */
+  login(){
+    return `<div class="container">
+      <div class="center" style="margin-top:30px">
+        <div class="emoji-blob" style="width:84px;height:84px;border-radius:28px;font-size:42px;margin:0 auto 16px">🤲</div>
+        <h2 style="font-size:26px;color:var(--ink);font-weight:800;margin-bottom:6px">Welcome back</h2>
+        <div class="subtle" style="color:var(--ink-soft)">Sign in to manage your health</div>
+      </div>
+      <div class="card mt">
+        <input class="input" placeholder="Email or phone" />
+        <input class="input" type="password" placeholder="Password" />
+        <button class="btn" onclick="navTo('home',{},{reset:true})">Log In</button>
+        <button class="btn ghost mt" onclick="navTo('home',{},{reset:true})">Create Account</button>
+      </div>
+      <p class="center subtle" style="color:var(--ink-mute);font-size:12px;margin-top:18px">By continuing you agree to our Terms & Privacy.</p>
+    </div>`;
+  },
+
+  /* —— 首页 —— */
+  home(){
+    return `<div class="container">
+      ${topbar({title:'Healthy Living',sub:'Hi Alex, stay healthy today'})}
+
+      <div class="gradient-card">
+        <div class="gv on-grad-2">NEED A DOCTOR?</div>
+        <div class="gh on-grad" style="margin-top:6px">See a Doctor Now</div>
+        <div class="gs on-grad-2" style="margin-bottom:14px">Find nearby hospitals and book in seconds</div>
+        <button class="btn light" onclick="navTo('map')">Find nearby hospital →</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="mini-stat"><div class="ico" style="color:var(--rose)">${icn('heart',16,2)}</div><div><div class="lbl">Heart Rate</div><div class="val">72 <span style="font-size:11px;color:var(--ink-soft);font-weight:600">bpm</span></div></div></div>
+        <div class="mini-stat"><div class="ico" style="color:var(--sage)">${icn('walk',16,2)}</div><div><div class="lbl">Steps</div><div class="val">5,824</div></div></div>
+        <div class="mini-stat"><div class="ico" style="color:var(--sky)">${icn('moon',16,2)}</div><div><div class="lbl">Sleep</div><div class="val">7.2 <span style="font-size:11px;color:var(--ink-soft);font-weight:600">h</span></div></div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="tile" onclick="navTo('insurance')">
+          <div class="big">🪪</div>
+          <div class="title">Insurance</div>
+        </div>
+        <div class="tile" onclick="switchTab('pharmacy')">
+          <div class="big">💊</div>
+          <div class="title">Pharmacy</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding-bottom:8px">
+        <div class="card-row" style="justify-content:space-between">
+          <div class="title">Community</div>
+          <span class="subtle" style="color:var(--accent-d);cursor:pointer;font-weight:700" onclick="switchTab('community')">See all ›</span>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)">
+          <div class="post-meta">
+            <div class="avatar" style="background:${DATA.posts[0].color}">${DATA.posts[0].avatar}</div>
+            <div class="meta-txt"><div class="name">${DATA.posts[0].author}</div><div class="time">${DATA.posts[0].time} ago</div></div>
+          </div>
+          <div class="post-title">${DATA.posts[0].title}</div>
+          <div class="post-body">${DATA.posts[0].body}</div>
+          <div class="post-stats"><span>${icn('heart',12,2)} ${DATA.posts[0].likes}</span><span>${icn('chat',12,2)} ${DATA.posts[0].comments}</span></div>
+        </div>
+      </div>
+
+      <div class="card" onclick="switchTab('health')">
+        <div class="card-row" style="justify-content:space-between">
+          <div class="title">Health Plan</div>
+          <span class="subtle" style="color:var(--accent-d);font-weight:700">Open ›</span>
+        </div>
+        <div class="card-row mt" style="padding-top:12px;border-top:1px dashed var(--line);margin-top:12px">
+          <div class="avatar" style="background:var(--sage)">🏃</div>
+          <div><div class="title" style="font-size:14px">Exercise Tips</div><div class="subtle">Personalized for you</div></div>
+        </div>
+      </div>
+    </div>`;
+  },
+
+  /* —— Map —— */
+  map(){
+    const list=DATA.hospitals;
+    const pins=list.map((h,i)=>`<div class="map-pin" style="top:${26+i*42}px;left:${70+i*55}px;background:${h.color}"><span>${h.name[0]}</span></div>`).join('');
+    return `<div class="container">
+      ${topbar({title:'Find Hospital',sub:'Nearby clinics & hospitals'})}
+      <div class="map">${pins}</div>
+      ${list.map(h=>`<div class="row" onclick="navTo('hospital',{id:'${h.id}'})">
+        <div class="avatar" style="background:${h.color}">🏥</div>
+        <div class="grow">
+          <div class="title">${h.name}</div>
+          <div class="subtle">${h.type} · ${h.distance} · wait ${h.wait}</div>
+        </div>
+        <span class="pill">Open</span>
+      </div>`).join('')}
+    </div>`;
+  },
+
+  /* —— Hospital —— */
+  hospital({id}){
+    const h=DATA.hospitals.find(x=>x.id===id)||DATA.hospitals[0];
+    const list=DATA.doctors.filter(d=>d.hospital===h.name);
+    return `<div class="container">
+      ${topbar({title:h.name,sub:h.type,back:true})}
+      <div class="gradient-card">
+        <div class="gv on-grad-2">DISTANCE</div>
+        <div class="gh on-grad" style="margin-top:4px">${h.distance} away</div>
+        <div class="gs on-grad-2" style="margin-top:6px">Est. wait ${h.wait} · Open 24/7</div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <span class="pill" style="background:var(--on-grad-fill);color:var(--on-grad)">${icn('check',12,2.5)} Emergency</span>
+          <span class="pill" style="background:var(--on-grad-fill);color:var(--on-grad)">${icn('car',12,2.5)} 6 min drive</span>
+        </div>
+      </div>
+      <div class="sec-title"><h3>Available Doctors</h3></div>
+      ${list.map(d=>`<div class="row" onclick="navTo('doctor',{id:'${d.id}'})">
+        <div class="avatar" style="background:${d.color}">${d.avatar}</div>
+        <div class="grow">
+          <div class="title">${d.name}</div>
+          <div class="subtle">${d.specialty}</div>
+        </div>
+        <span class="stars">★ ${d.rating}<span class="subtle">(${d.reviews})</span></span>
+      </div>`).join('')}
+    </div>`;
+  },
+
+  /* —— Doctor —— */
+  doctor({id}){
+    const d=DATA.doctors.find(x=>x.id===id)||DATA.doctors[0];
+    if(!state.selectedSlot[id])state.selectedSlot[id]=d.availability[0];
+    const slot=state.selectedSlot[id];
+    return `<div class="container">
+      ${topbar({title:'Doctor',back:true})}
+      <div class="card center">
+        <div class="avatar xl" style="background:${d.color};margin:0 auto">${d.avatar}</div>
+        <div class="title" style="margin-top:10px;font-size:17px">${d.name}</div>
+        <div class="subtle">${d.specialty} · ${d.hospital}</div>
+        <div class="stars mt" style="margin-top:8px">★ ${d.rating} <span class="subtle">(${d.reviews} reviews)</span></div>
+        <p class="subtle mt" style="line-height:1.6;color:var(--ink-soft);font-size:13px;margin-top:10px">${d.about}</p>
+      </div>
+
+      <div class="card">
+        <div class="card-row" style="justify-content:space-between;align-items:center">
+          <div class="title">Availability</div>
+          <span class="subtle" style="font-size:11px;color:var(--ink-mute);font-weight:600">TODAY</span>
+        </div>
+        <div class="slots">
+          ${d.availability.map(s=>`<div class="slot${s===slot?' sel':''}" onclick="state.selectedSlot['${d.id}']='${s}';render()">${s}</div>`).join('')}
+        </div>
+        <button class="btn mt" onclick="navTo('appointmentDone',{doctor:'${d.name}',slot:'${slot}'})">Book at ${slot}</button>
+      </div>
+    </div>`;
+  },
+
+  appointmentDone({doctor,slot}){
+    const docName=doctor||'Dr. Jack Anderson';
+    const time=slot||'09:00';
+    return `<div class="container">
+      ${topbar({title:'',back:true})}
+      <div class="success-page">
+        <div class="success-icon">${icn('check',36,3)}</div>
+        <h2>Appointment Confirmed</h2>
+        <div class="subtle">Your appointment with <b style="color:var(--ink)">${docName}</b><br>is today at <b style="color:var(--accent-d)">${time}</b>!</div>
+        <div class="info-card">
+          <div class="title">📅 Today · ${time}</div>
+          <div class="subtle mt" style="margin-top:8px;color:var(--ink-soft)">ABC Hospital · Cardiology</div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <span class="pill">${icn('check',10,2.5)} Confirmed</span>
+            <span class="pill terra">SMS sent</span>
+          </div>
+        </div>
+        <button class="btn mt" onclick="navTo('home',{},{reset:true});switchTab('home')">Back to Home</button>
+      </div>
+    </div>`;
+  },
+
+  /* —— Insurance（多步） —— */
+  insurance(){
+    const step=state.insuranceStep[activeTab]||0;
+    const type=state.insuranceType[activeTab]||DATA.insuranceTypes[0];
+    state.insuranceType[activeTab]=type;
+    state.insuranceStep[activeTab]=step;
+    const file=state.insuranceFile[activeTab]||false;
+    if(step===0){
+      return `<div class="container">
+        ${topbar({title:'Insurance',sub:'Choose your plan',back:true})}
+        <div class="step-ind"><div class="d on"></div><div class="d"></div><div class="d"></div><div class="d"></div></div>
+        ${DATA.insuranceTypes.map(t=>`<div class="row" onclick="state.insuranceType['${activeTab}']=${JSON.stringify(t).replace(/"/g,'&quot;')};state.insuranceStep['${activeTab}']=0;render()">
+          <div class="avatar" style="background:${t.color}">🪪</div>
+          <div class="grow"><div class="title">${t.name}</div><div class="subtle">${t.desc}</div></div>
+          <span class="pill${type.id===t.id?'':' light'}">${type.id===t.id?'Selected':'Tap'}</span>
+        </div>`).join('')}
+        <button class="btn mt" onclick="state.insuranceStep['${activeTab}']=1;render()">Continue with ${type.name}</button>
+      </div>`;
+    }
+    if(step===1){
+      return `<div class="container">
+        ${topbar({title:'Upload Card',sub:type.name,back:true,onBack:`(function(){state.insuranceStep['${activeTab}']=0;render()})`})}
+        <div class="step-ind"><div class="d on"></div><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+        <div class="card center" onclick="state.insuranceFile['${activeTab}']=true;render()" style="border:2px dashed var(--accent);cursor:pointer">
+          <div style="font-size:54px;margin-bottom:8px">${file?'✅':'📷'}</div>
+          <div class="title">${file?'Card scanned':'Scan / Upload card'}</div>
+          <div class="subtle">${file?'Front & back captured':'Tap to capture or browse'}</div>
+        </div>
+        <div class="card">
+          <div class="title">We'll auto-fill</div>
+          <div class="subtle mt" style="margin-top:8px;color:var(--ink-soft);line-height:1.6">Member ID, expiry, and coverage tier will be extracted and verified instantly.</div>
+        </div>
+        <button class="btn mt"${file?'':' disabled'} onclick="state.insuranceStep['${activeTab}']=2;render()">Continue</button>
+      </div>`;
+    }
+    if(step===2){
+      return `<div class="container">
+        ${topbar({title:'Notice',sub:type.name,back:true,onBack:`(function(){state.insuranceStep['${activeTab}']=1;render()})`})}
+        <div class="step-ind"><div class="d on"></div><div class="d on"></div><div class="d on"></div><div class="d"></div></div>
+        <div class="card">
+          <div class="title" style="display:flex;align-items:center;gap:8px">${icn('shield',16,2)} Coverage Notice</div>
+          <p class="subtle mt" style="line-height:1.7;color:var(--ink-soft);margin-top:10px">
+            Your <b style="color:var(--ink)">${type.name}</b> will cover eligible consultations and prescriptions.
+            Co-pay may apply per visit. Coverage starts immediately after activation.
+          </p>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <span class="pill sage">${icn('check',10,2.5)} GP visits</span>
+            <span class="pill rose">Specialist 20%</span>
+          </div>
+        </div>
+        <button class="btn mt" onclick="state.insuranceStep['${activeTab}']=3;render()">I Understand</button>
+      </div>`;
+    }
+    return `<div class="container">
+      ${topbar({title:'',back:true})}
+      <div class="step-ind"><div class="d on"></div><div class="d on"></div><div class="d on"></div><div class="d on"></div></div>
+      <div class="success-page">
+        <div class="success-icon" style="background:var(--accent-t);color:var(--accent-d)">🎉</div>
+        <h2>Insurance Activated</h2>
+        <div class="subtle"><b style="color:var(--ink)">${type.name}</b> is now linked to your account.</div>
+        <div class="info-card">
+          <div class="title" style="display:flex;align-items:center;gap:8px">${icn('shield',14,2)} Coverage summary</div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <span class="pill sage">Active</span>
+            <span class="pill light">ID · HL-2026-${type.id.toUpperCase()}</span>
+          </div>
+          <div class="subtle mt" style="margin-top:12px;color:var(--ink-soft);font-size:13px">Effective immediately. Card available in your wallet.</div>
+        </div>
+        <button class="btn mt" onclick="state.insuranceStep['${activeTab}']=0;navTo('home',{},{reset:true});switchTab('home')">Done</button>
+      </div>
+    </div>`;
+  },
+
+  /* —— Pharmacy —— */
+  pharmacy(){
+    return `<div class="container">
+      ${topbar({title:'Pharmacy',sub:'Order medicine & refills'})}
+      <div class="card" style="padding:14px;display:flex;align-items:center;gap:10px;background:var(--tile)">
+        <div style="color:var(--ink-mute)">${icn('search',18,2)}</div>
+        <div style="flex:1;color:var(--ink-soft);font-size:13px">Search medicine, brand or symptom…</div>
+      </div>
+      ${DATA.pharmacies.map(p=>`<div class="row" onclick="navTo('pharmacyDetail',{id:'${p.id}'})">
+        <div class="avatar" style="background:${p.color}">💊</div>
+        <div class="grow">
+          <div class="title">${p.name}</div>
+          <div class="subtle">${p.distance} · ★ ${p.rating} · 30-min delivery</div>
+        </div>
+        <span class="pill sage">Open</span>
+      </div>`).join('')}
+    </div>`;
+  },
+
+  pharmacyDetail({id}){
+    const p=DATA.pharmacies.find(x=>x.id===id)||DATA.pharmacies[0];
+    const list=DATA.medicines[id]||[];
+    const cart=state.cart[activeTab]||[];state.cart[activeTab]=cart;
+    const toggle=id=>{const cur=state.cart[activeTab];const item=list.find(x=>x.id===id);if(!item)return;if(cur.find(x=>x.id===id))state.cart[activeTab]=cur.filter(x=>x.id!==id);else state.cart[activeTab]=[...cur,item];render();};
+    const total=cart.reduce((s,m)=>s+m.price,0);
+    return `<div class="container">
+      ${topbar({title:p.name,sub:`${p.distance} · 30 min delivery`,back:true})}
+      <div class="gradient-card">
+        <div class="gv on-grad-2">DELIVERY</div>
+        <div class="gh on-grad" style="margin-top:4px">Free above ¥30</div>
+        <div class="gs on-grad-2" style="margin-top:6px">${cart.length} item${cart.length===1?'':'s'} in cart</div>
+      </div>
+      <div class="sec-title"><h3>${list.length} medicines available</h3><span class="st-cap">${icn('filter',12,2)} Sort</span></div>
+      ${list.map(m=>{const sel=cart.find(x=>x.id===m.id);
+        return `<div class="row">
+          <div class="avatar" style="background:var(--accent-t);color:var(--accent-d)">💊</div>
+          <div class="grow">
+            <div class="title">${m.name}</div>
+            <div class="subtle">${m.desc}</div>
+            <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+              <span class="pill ${m.tag==='Prescription'?'rose':'light'}">${m.tag}</span>
+              <span class="price">¥${m.price.toFixed(2)}</span>
+            </div>
+          </div>
+          <button class="btn tiny" style="${sel?'background:var(--accent);box-shadow:0 4px 12px rgba(110,184,174,.4)':'background:var(--tile);color:var(--ink);box-shadow:none'}" onclick="toggle('${m.id}')">${sel?'✓ Added':'+ Add'}</button>
+        </div>`;}).join('')}
+      <button class="btn mt"${cart.length?'':' disabled'} onclick="navTo('orderConfirm',{items:${JSON.stringify(cart).replace(/"/g,'&quot;')},pharmacy:'${p.name}'})">Order · ¥${total.toFixed(2)}</button>
+    </div>`;
+  },
+
+  orderConfirm({items,pharmacy}){
+    items=items||[];pharmacy=pharmacy||'ABC Pharmacy';
+    const total=items.reduce((s,m)=>s+m.price,0);
+    const orderId='01548875645';
+    return `<div class="container">
+      ${topbar({title:'Confirm Order',sub:pharmacy,back:true})}
+      <div class="card">
+        <div class="card-row" style="justify-content:space-between;align-items:center">
+          <div><div class="title">Order #${orderId}</div><div class="subtle">${pharmacy}</div></div>
+          <span class="pill amber">${icn('clock',12,2)} 30 min</span>
+        </div>
+      </div>
+      ${items.map(m=>`<div class="row">
+        <div class="avatar" style="background:var(--accent-t);color:var(--accent-d)">💊</div>
+        <div class="grow"><div class="title">${m.name}</div><div class="subtle">${m.tag}</div></div>
+        <span class="price">¥${m.price.toFixed(2)}</span>
+      </div>`).join('')}
+      <div class="card" style="padding:14px;display:flex;justify-content:space-between;align-items:center">
+        <div><div class="title">Total</div><div class="subtle">incl. delivery</div></div>
+        <span style="font-size:18px;font-weight:800;color:var(--accent-d)">¥${total.toFixed(2)}</span>
+      </div>
+      <button class="btn mt" onclick="navTo('orderDone',{orderId:'${orderId}'})">Place Order</button>
+    </div>`;
+  },
+
+  orderDone({orderId}){
+    const oid=orderId||'01548875645';
+    const r=state.rating[activeTab]||0;state.rating[activeTab]=r;
+    const s=state.shared[activeTab]||false;state.shared[activeTab]=s;
+    return `<div class="container">
+      ${topbar({title:'',back:true})}
+      <div class="success-page">
+        <div class="success-icon" style="background:var(--accent-t);color:var(--accent-d)">🎉</div>
+        <h2>Thank You!</h2>
+        <div class="subtle">Order <b style="color:var(--ink)">#${oid}</b> placed successfully.<br>Arriving in ~30 minutes.</div>
+        <div class="card mt" style="text-align:left">
+          <div class="title">Share your experience</div>
+          <div class="subtle mt" style="margin-top:4px;color:var(--ink-soft)">Your feedback helps pharmacies improve</div>
+          <div class="star-rate">
+            ${[1,2,3,4,5].map(i=>`<span class="${i<=r?'on':''}" onclick="state.rating['${activeTab}']=${i};render()">★</span>`).join('')}
+          </div>
+          <button class="btn light" onclick="state.shared['${activeTab}']=true;render()">${s?'✓ Shared':'Share experience'}</button>
+        </div>
+        <button class="btn mt" onclick="navTo('home',{},{reset:true});switchTab('home')">Back to Home</button>
+      </div>
+    </div>`;
+  },
+
+  /* —— Community —— */
+  community(){
+    return `<div class="container">
+      ${topbar({title:'Community',sub:'Health stories & tips'})}
+      <div class="tabs">
+        <div class="tab-pill on">All</div>
+        <div class="tab-pill">Following</div>
+        <div class="tab-pill">Saved</div>
+      </div>
+      ${DATA.posts.map(p=>`<div class="post-card">
+        <div class="post-meta">
+          <div class="avatar" style="background:${p.color}">${p.avatar}</div>
+          <div class="meta-txt"><div class="name">${p.author}</div><div class="time">${p.time} ago</div></div>
+          <div style="margin-left:auto;color:var(--ink-mute)">${icn('more',18,2)}</div>
+        </div>
+        <div class="post-title">${p.title}</div>
+        <div class="post-body">${p.body}</div>
+        <div class="post-stats">
+          <span>${icn('heart',12,2)} ${p.likes}</span>
+          <span>${icn('chat',12,2)} ${p.comments}</span>
+          <span>${icn('share',12,2)} ${p.shares}</span>
+          <span style="margin-left:auto">${icn('bookmark',12,2)} Save</span>
+        </div>
+      </div>`).join('')}
+      <div class="fab" onclick="navTo('communityNew')">${icn('pencil',22,2)}</div>
+    </div>`;
+  },
+
+  communityNew(){
+    const t=state.newPost[activeTab]?.title||'';
+    const b=state.newPost[activeTab]?.body||'';
+    const ready=t.trim()&&b.trim();
+    return `<div class="container">
+      ${topbar({title:'New Post',sub:'Share with community',back:true})}
+      <div class="card">
+        <input class="input" placeholder="Title" value="${esc(t)}" oninput="state.newPost['${activeTab}']={title:this.value,body:state.newPost['${activeTab}']?.body||''}" />
+        <textarea class="input" rows="6" placeholder="Share your story…" style="resize:none" oninput="state.newPost['${activeTab}']={title:state.newPost['${activeTab}']?.title||'',body:this.value}">${esc(b)}</textarea>
+        <div class="subtle" style="display:flex;justify-content:space-between;font-size:12px;margin-top:-4px;margin-bottom:10px">
+          <span>Markdown supported</span>
+          <span>${b.length}/500</span>
+        </div>
+        <button class="btn"${ready?'':' disabled'} onclick="state.newPost['${activeTab}']={title:'',body:''};toast('Post published','good');back()">Publish</button>
+      </div>
+      <div class="card">
+        <div class="title" style="display:flex;align-items:center;gap:8px">${icn('palette',14,2)} Tips for a great post</div>
+        <ul style="margin-top:10px;color:var(--ink-soft);font-size:13px;padding-left:18px;line-height:1.7">
+          <li>Share personal experience, not generic advice</li>
+          <li>Add a question to invite discussion</li>
+          <li>Tag your post with #topic to reach more people</li>
+        </ul>
+      </div>
+    </div>`;
+  },
+
+  /* —— Health —— */
+  health(){
+    const f=state.healthForm[activeTab]||state.healthForm;state.healthForm[activeTab]=f;
+    const ready=f.age&&f.height&&f.weight;
+    const set=k=>v=>{state.healthForm[activeTab]={...f,[k]:v};render();};
+    return `<div class="container">
+      ${topbar({title:'Exercise Tips',sub:'Personalize your plan'})}
+      <div class="gradient-card" style="background:linear-gradient(135deg,var(--sage),var(--sage))">
+        <div class="gv on-grad-2">YOUR PROFILE</div>
+        <div class="gh on-grad" style="margin-top:4px">Tailor my plan</div>
+        <div class="gs on-grad-2" style="margin-top:6px">A 30-second form gives you a personalized walking & nutrition plan</div>
+      </div>
+      <div class="card">
+        <div class="title" style="margin-bottom:10px">About you</div>
+        <div class="subtle" style="margin-bottom:6px;color:var(--ink-soft);font-size:12px;font-weight:700">GENDER</div>
+        <div class="slots" style="margin-top:0">
+          ${['Female','Male'].map(g=>`<div class="slot${f.gender===g?' sel':''}" onclick="(${set('gender')})('${g}')">${g}</div>`).join('')}
+        </div>
+        <div style="height:10px"></div>
+        <input class="input" placeholder="Age" inputmode="numeric" value="${esc(f.age)}" oninput="(${set('age')})(this.value)" />
+        <div class="input-grid">
+          <input class="input" placeholder="Height (cm)" inputmode="numeric" value="${esc(f.height)}" oninput="(${set('height')})(this.value)" />
+          <input class="input" placeholder="Weight (kg)" inputmode="numeric" value="${esc(f.weight)}" oninput="(${set('weight')})(this.value)" />
+          <input class="input" placeholder="Goal" value="${esc(f.goal||'')}" oninput="(${set('goal')})(this.value)" />
+        </div>
+        <button class="btn mt"${ready?'':' disabled'} onclick="navTo('healthWalk')">Get my plan</button>
+      </div>
+    </div>`;
+  },
+
+  healthWalk(){
+    return `<div class="container">
+      ${topbar({title:'Walking',sub:'Daily brisk walk',back:true})}
+      <div class="card center">
+        <div style="font-size:48px;margin-bottom:8px">🚶</div>
+        <div class="title" style="margin-top:6px">Brisk walking</div>
+        <div style="font-size:46px;font-weight:800;color:var(--accent-d);margin:8px 0;line-height:1">30 <span style="font-size:18px">min</span></div>
+        <div class="subtle">Great for heart health & mood</div>
+      </div>
+      <div class="card">
+        <div class="card-row" style="justify-content:space-between;align-items:center">
+          <div class="subtle" style="color:var(--ink-soft)">Today's goal</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent-d)">18 / 30 min</div>
+        </div>
+        <div class="progress-bar mt" style="margin-top:8px"><div style="width:60%"></div></div>
+        <div class="subtle mt" style="margin-top:12px;color:var(--ink-soft);font-size:12px">60% complete · 12 min remaining</div>
+      </div>
+      <div class="card">
+        <div class="title" style="margin-bottom:10px">Why it works</div>
+        <div class="subtle" style="color:var(--ink-soft);font-size:13px;line-height:1.7">30 min brisk walking daily lowers resting heart rate, improves VO₂ max, and stabilizes mood — all backed by long-term cohort studies.</div>
+      </div>
+      <button class="btn mt" onclick="navTo('healthNutrition')">Next: Nutrition</button>
+    </div>`;
+  },
+
+  healthNutrition(){
+    const meals=[
+      {t:'Breakfast',time:'08:00',c:'Oats & fruits',e:'🥣',color:'var(--gold-t)'},
+      {t:'Lunch',time:'12:00',c:'Grilled chicken salad',e:'🥗',color:'var(--sage-t)'},
+      {t:'Dinner',time:'18:00',c:'Veggie bowl',e:'🍲',color:'var(--rose-t)'},
+    ];
+    return `<div class="container">
+      ${topbar({title:'Nutrition',sub:'Daily plan',back:true})}
+      <div class="card center">
+        <div class="ring">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke-width="9" class="ring-track"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke-width="9" class="ring-progress"
+              stroke-dasharray="263.9" stroke-dashoffset="105.6"/>
+          </svg>
+          <div class="ring-inner">
+            <div class="num">620</div>
+            <div class="lab">Cal / day</div>
+          </div>
+        </div>
+        <div class="title">Personal Nutrition Plan</div>
+        <div class="subtle mt" style="margin-top:4px">Balanced macros for your profile</div>
+      </div>
+      <div class="stat-row">
+        <div class="mini-stat"><div class="ico" style="color:var(--terra)">🥩</div><div><div class="lbl">Protein</div><div class="val">85 g</div></div></div>
+        <div class="mini-stat"><div class="ico" style="color:var(--gold)">🌾</div><div><div class="lbl">Carbs</div><div class="val">120 g</div></div></div>
+          <div class="mini-stat"><div class="ico" style="color:var(--sage)">🥑</div><div><div class="lbl">Fats</div><div class="val">42 g</div></div></div>
+      </div>
+      <div class="sec-title"><h3>Today's meals</h3></div>
+      ${meals.map(m=>`<div class="meal-row">
+        <div class="meal-emoji" style="background:${m.color}">${m.e}</div>
+        <div style="flex:1"><div class="title">${m.t}</div><div class="subtle">${m.c}</div></div>
+        <div class="time">${m.time}</div>
+      </div>`).join('')}
+      <button class="btn mt" onclick="navTo('home',{},{reset:true});switchTab('home')">Done</button>
+    </div>`;
+  },
+
+};
+
+/* =========================================================
+   主题设置弹层
+   ========================================================= */
+function openTheme(){
+  const sg=document.getElementById('themeSheet');
+  sg.innerHTML=`
+    <div class="sheet-bar"></div>
+    <h3>主题外观</h3>
+    <div class="sub">背景色 × 强调色 × 波点纹理，让界面随你的心情换肤</div>
+
+    <div class="sec-title"><h3>背景</h3><span class="st-cap">${SETTINGS.dots?'波点 ON':'纯色'}</span></div>
+    <div class="theme-grid">
+      ${THEMES.map(t=>{
+        const dotStyle=SETTINGS.dots?'radial-gradient(circle, rgba(255,255,255,.22) 1px, transparent 2px) 0 0/12px 12px,':'';
+        return `<div class="theme-sw${SETTINGS.bg===t.id?' sel':''}" style="background:${dotStyle}linear-gradient(135deg,${t.grad1},${t.grad2})" onclick="pickBg('${t.id}')">
+          <div class="tsw-name">${t.name}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn tiny" style="background:var(--tile);color:var(--ink);box-shadow:none;flex:1" onclick="toggleDots()">${SETTINGS.dots?'关闭波点':'开启波点'}</button>
+    </div>
+
+    <div class="sec-title"><h3>强调色</h3><span class="st-cap">按钮 & 链接</span></div>
+    <div class="accent-grid">
+      ${ACCENTS.map(a=>`<div class="accent-sw${SETTINGS.accent===a.id?' sel':''}" style="background:${a.c}" onclick="pickAccent('${a.id}')"></div>`).join('')}
+    </div>
+
+    <button class="btn light mt" onclick="closeSheet()" style="margin-top:18px">完成</button>
+  `;
+  openSheet('themeSheet');
+}
+function pickBg(id){SETTINGS.bg=id;applyTheme();saveSettings();openTheme();}
+function toggleDots(){SETTINGS.dots=!SETTINGS.dots;applyTheme();saveSettings();openTheme();}
+function pickAccent(id){SETTINGS.accent=id;applyTheme();saveSettings();openTheme();}
+function saveSettings(){try{localStorage.setItem('hl_theme',JSON.stringify(SETTINGS));}catch(e){}}
+
+/* =========================================================
+   初始化：splash → 1.4s → login → home
+   ========================================================= */
+applyTheme();
+stacks.home=[{name:'home'}];
+stacks.map=[{name:'map'}];
+stacks.pharmacy=[{name:'pharmacy'}];
+stacks.community=[{name:'community'}];
+stacks.health=[{name:'health'}];
+activeTab='home';
+stacks.home=[{name:'splash'}];
+render();
+
+setTimeout(()=>{
+  stacks.home=[{name:'login'}];
+  activeTab='home';
+  render();
+},1500);
+
+/* —— 实时时钟（状态栏） —— */
+(function clock(){
+  const el=document.getElementById('clock');
+  function tick(){
+    const d=new Date();
+    el.textContent=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+  tick();setInterval(tick,30000);
+})();
+
+/* —— 暴露到 window —— */
+window.navTo=navTo;window.back=back;window.switchTab=switchTab;
+window.state=state;window.render=render;
+window.openTheme=openTheme;window.pickBg=pickBg;window.toggleDots=toggleDots;window.pickAccent=pickAccent;
+window.closeSheet=closeSheet;window.toast=toast;
+</script>
+</body>
 </html>
